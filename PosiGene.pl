@@ -52,7 +52,7 @@ use Try::Tiny;
 use Storable;
 use Pod::Usage;
 
-#open (STDERR, ">/dev/null");#disable warnings, should be commented out when debugging 
+open (STDERR, ">/dev/null");#disable warnings, should be commented out when debugging 
 no warnings;#disable warnings, should be commented out when debug
 
 my $perl="perl";
