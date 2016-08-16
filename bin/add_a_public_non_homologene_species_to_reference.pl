@@ -23,7 +23,7 @@ my $makeblastdb_path=$bin_dir."makeblastdb";
 my $perl_path="perl";
 my $BlastP_path=$bin_dir."BlastP.pl";
 
-#open (STDERR, ">/dev/null");#disable warnings, should be commented out when debugging 
+open (STDERR, ">/dev/null");#disable warnings, should be commented out when debugging 
 no warnings;#disable warnings, shouldgenbank (.gb, .gbk) or fasta (.fasta,.fa) format be commented out when debug
 
 #my ($gbk_or_fa_File, $refPath,$trans_to_symbol_file, $blastResultPathNonHomologeneVsRef,$blastResultPathRefVsNonHomologene,$BLASTthreshold,$logFile,$threadNum,$reUseExistingBLASTResults)=("/home/lakatos/asahm/enton/MRNA_public_data/Cavia_porcellus_NCBI_mrna_RefSeq_16.06.2014.gbk","/home/lakatos/asahm/enton/Reference_6_2/","transcr_to_symbol.hash","Cavia_porcellus_NCBI_mrna_RefSeq_16.06.2014.gbk.translation.fa_VS_all.fastp.blast_result","all.fastp_VS_Cavia_porcellus_NCBI_mrna_RefSeq_16.06.2014.gbk.translation.fa.blast_result","1-e04","add_a_public_non_homologene_species_to_reference_Cavia_porcellus.log",50,1);
@@ -243,6 +243,10 @@ sub myThread{
 				if (!(-e $speciesPath && -d $speciesPath)){
 					mkdir ($speciesPath);
 				}
+				my $id=$seq->id();
+				$id=~s/[\/ |\\&]/_/g;
+				$id=~s/[()]//g;
+				$seq->id($id);		
 				##print("Translation: ".$translation."\n");
 				$translation=Bio::Seq->new(-id => $seq->id(), -seq => $translation);
 				$CDS=Bio::Seq->new(-id => $seq->id(), -seq => $CDS->seq());
@@ -306,10 +310,10 @@ my ($path,$outpath)=@_;
 		
 		if (((++$i) % 500)==0){print("Step 2/7 ($speciesProgressString), read ".$i." sequences from $path\n");}			
 		#print("Read ".(++$i).": $geneName from ".$path."\n");
-		push(@{$IntraSpeciesGeneNameToAllItsIsos{$geneName}},$seq);
-		$IsoNameToIntraSpeciesGeneName{$seq->id()}=$geneName;
 		my $translation_seq=getTag($seq,"CDS","translation");
 		if (defined($translation_seq)){
+			push(@{$IntraSpeciesGeneNameToAllItsIsos{$geneName}},$seq);
+			$IsoNameToIntraSpeciesGeneName{$seq->id()}=$geneName;
 			my $translation=Bio::Seq->new(-id => $seq->display_id(), -seq => $translation_seq);
 			$translationsOut->write_seq($translation);			
 		}	
