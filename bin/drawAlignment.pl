@@ -13,7 +13,6 @@ use Bio::AlignIO;
 use Storable;
 use Bio::SimpleAlign;
 use POSIX;
-require Bio::Align::Graphics;
 use Bio::Coordinate::GeneMapper;
 use Bio::Location::Simple;
 use Bio::Range;
@@ -161,6 +160,7 @@ sub drawAlignment{
 	my $max_numb_digits_nucl=int(log($nucl_aln->length)/log(10))+1;	
 
 	if ($do_image_output){
+		require Bio::Align::Graphics;
 		my $print_align = new Bio::Align::Graphics( align => $prot_aln,	
 			pad_bottom => 7,
 			pad_left => 1,
