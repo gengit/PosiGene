@@ -52,7 +52,7 @@ use Try::Tiny;
 use Storable;
 use Pod::Usage;
 
-open (STDERR, ">/dev/null");#disable warnings, should be commented out when debugging 
+#open (STDERR, ">/dev/null");#disable warnings, should be commented out when debugging 
 no warnings;#disable warnings, should be commented out when debug
 
 my $perl="perl";
@@ -318,7 +318,7 @@ if (($mode eq "all") || ($mode eq "create_catalog") || ($mode eq "add_species"))
 		}
 		
 		
-		if ((!defined(@gbks_part_of_homologene)) && ($gbks_or_fas_not_part_of_homologene>0)){
+		if ((!@gbks_part_of_homologene) && ($gbks_or_fas_not_part_of_homologene>0)){
 			print("You have to specify at least one genbank (.gbk or .gb) file with sequences of a species part of HomoloGene (parameter: homologene_species|hs)...\n");
 			exit(1);
 		}
@@ -332,7 +332,7 @@ if (($mode eq "all") || ($mode eq "create_catalog") || ($mode eq "add_species"))
 		}
 	}
 	if (!(($continue) && ($status>2)) || ($mode eq "add_species")){
-		if (!defined(@gbks_or_fas_not_part_of_homologene) && ($mode eq "add_species")){
+		if ((!@gbks_or_fas_not_part_of_homologene) && ($mode eq "add_species")){
 			print("You have to specify at least one genbank (.gbk or .gb) or fasta file with sequences of one species...\n");
 			exit(1);
 		}		
@@ -359,7 +359,7 @@ if (($mode eq "all") || ($mode eq "create_catalog") || ($mode eq "add_species"))
 	}
 }
 #if ($mode eq "add_species"){
-#		if (!defined(@gbks_or_fas_not_part_of_homologene)){
+#		if (!@gbks_or_fas_not_part_of_homologene){
 #			print("You have to specify at least one genbank (.gbk or .gb) or fasta file with sequences of one species...\n");
 #			exit(1);
 #		}
@@ -375,7 +375,7 @@ if (($mode eq "all") || ($mode eq "create_catalog") || ($mode eq "add_species"))
 #}
 if (($mode eq "all") || ($mode eq "alignments")){
 	if (!(($continue) && ($status>6))){
-		if (!defined(@selected_species)){
+		if (!@selected_species){
 	 		print("You have to specifiy at least one anchor-species for alignments with one sequence per species (parameter: selected_species|ss)...\n");
 	 		exit(1);
 		}
@@ -383,7 +383,7 @@ if (($mode eq "all") || ($mode eq "alignments")){
 	}
 }
 if (($mode eq "all") || ($mode eq "positive_selection")){
-	if (!defined(@selected_species)){
+	if (!@selected_species){
  		print("You have to specifiy at least one anchor-species (parameter: anchor_species|as)...\n");
  		exit(1);
 	}
@@ -406,7 +406,7 @@ if (($mode eq "all") || ($mode eq "create_catalog") || ($mode eq "add_species"))
 		my $gbks_string="";
 		for my $gbk_path(@gbks_part_of_homologene){$gbks_string.="\"$gbk_path\" ";}
 		my $logFile=$logs_dir."parse_homologene.log";
-		if (defined(@gbks_part_of_homologene)){my_system("\"$perl\" \"$parse_homologene\" \"$progress\" \"$individual_results_dir\" \"$ortholog_assignments_dir\" \"$homologene\" \"$transcr_to_prot\" \"$prot_to_symbol\" \"$transcr_to_symbol\" \"$logFile\" $gbks_string");}
+		if (@gbks_part_of_homologene){my_system("\"$perl\" \"$parse_homologene\" \"$progress\" \"$individual_results_dir\" \"$ortholog_assignments_dir\" \"$homologene\" \"$transcr_to_prot\" \"$prot_to_symbol\" \"$transcr_to_symbol\" \"$logFile\" $gbks_string");}
 	}
 	if (!(($continue) && ($status>2)) || ($mode eq "add_species")){
 		my $i=0;
