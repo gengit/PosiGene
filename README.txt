@@ -4,7 +4,7 @@ be used in arbitrary species contexts and (iv) offers visualization of the
 candidates. PosiGene was tested on simulated as well as real data to ensure the 
 reliability of the predicted positively selected genes. 
 
-You do not need any further installation steps after unpacking.
+After unpacking, no further installation steps are needed.
 
 To learn how to use PosiGene please read the user guide that can be found under 
 doc/user_guide.pdf.
