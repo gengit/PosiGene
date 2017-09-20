@@ -221,7 +221,7 @@ sub myThread{
 				my @nodes=$tree->get_nodes();
 				for my $seq($aln2->each_seq){
 					my $b=0;
-	    			map {my $id=$_->id; $id=~s/[# 0-9]//g;if ($species_hash->{$seq->id} eq $id){$b=1}} @nodes;
+	    			map {my $id=$_->id; $id=~s/ //g; $id=~s/[#].(0-9)*//g;if ($species_hash->{$seq->id} eq $id){$b=1}} @nodes;
 	    			if (!$b){$aln2->remove_seq($seq)}
 				}
 										
