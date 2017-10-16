@@ -874,7 +874,7 @@ sub mark_branch{
 	my ($tree,@target_leafs)=@_;
 	my @target_nodes=find_nodes($tree,\@target_leafs,1);
 	my $lca = (@target_nodes==1)?$target_nodes[0]:$tree->get_lca(-nodes => \@target_nodes);
-	if($tree->get_root_node()->each_Descendent()<3){	
+	#if($tree->get_root_node()->each_Descendent()<3){	
 		my @internal_nodes;
 		for my $node($tree->get_nodes){if(($node ne $tree->get_root_node) && !($node->is_Leaf)){push(@internal_nodes,$node)}}
 		for (my $i=0; ($i<@internal_nodes) && ($lca eq $tree->get_root_node);$lca=$tree->get_lca(-nodes => \@target_nodes)){	
@@ -882,7 +882,7 @@ sub mark_branch{
 			my_contract_linear_paths($tree,1);
 		}
 		my_contract_linear_paths($tree,1);
-	}
+	#}
 	if($lca eq $tree->get_root_node){				
 		print("The set of target species you specified leads to the last common ancestor of all species in the tree. If you really want to test this branch for positive selection you have to add outgroup species to the data set with \"add_species\" and to use \"alignment\" again...\n");
 		exit(1);
