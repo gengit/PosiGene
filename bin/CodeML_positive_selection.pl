@@ -379,7 +379,7 @@ sub myThread{
 						my @filters=(($extraStats_HA->{"omega_foreground"}<$min_foreground_KaKs)  , ($extraStats_HA->{"omega_foreground"}>=$max_foreground_KaKs) , ($extraStats_HA->{"omega_background"}>1) , ($extraStats_HA->{"omega_background"}>($extraStats_HA->{"omega_foreground"})) , ($extraStats_H0->{"omega_background"}>1) , ($extraStats_H0->{"omega_background"}>($extraStats_H0->{"omega_foreground"})) , (int($aln3->each_seq)<$min_seq_num_soft) , (int(@{$BEBs})<1) , (int(@{$BEBs})/($aln3->length/3)>=$BEB_excess_percentage) , (($aln3->length/$aln_prep->length)<(1-$max_gap_percentage_aln_soft/100)) , (($aln3->length/length($position_seq_prep))<(1-$max_gap_percentage_position_seq_soft/100)) , (!$all_context_species_present),($min_outgroups>$outgroups));
 						for (my $i=1; $i<=@filters; $i++){if($filters[$i-1]){$correction_code+=2**$i}}
 						##if (($extraStats_HA->{"omega_foreground"}<$min_foreground_KaKs)  || ($extraStats_HA->{"omega_foreground"}>=$max_foreground_KaKs) || ($extraStats_HA->{"omega_background"}>1) || ($extraStats_HA->{"omega_background"}>($extraStats_HA->{"omega_foreground"})) || ($extraStats_H0->{"omega_background"}>1) || ($extraStats_H0->{"omega_background"}>($extraStats_H0->{"omega_foreground"})) || (int($aln3->each_seq)<$min_seq_num_soft) || (int(@{$BEBs})<1) || (int(@{$BEBs})/($aln3->length/3)>=$BEB_excess_percentage) || (($aln3->length/$aln_prep->length)<(1-$max_gap_percentage_aln_soft/100)) || (($aln3->length/length($position_seq_prep))<(1-$max_gap_percentage_position_seq_soft/100)) || (!$all_context_species_present)){$corrected_chi2=1}
-						if($correction_code>1){$corrected_chi2=1}
+						if($correction_code>1){$corrected_chi2="NA"}
 						push(@{$results{$position_species_path.$result_name}},$correction_code,$corrected_chi2);
 					} else {$chi2NotCalculated{$position_species_path.$result_name}=1;$results{$position_species_path.$result_name}=undef}
 				} else {$chi2NotCalculated{$position_species_path.$result_name}=1;$results{$position_species_path.$result_name}=undef}						
@@ -572,7 +572,7 @@ sub output_results_as_text_sorted{
 		}else {print(OUT "\tSite under positve Selection $i");}
 	}
 	print(OUT "\n");
-	foreach my $key (sort { ($hash->{$a}->[18] <=> $hash->{$b}->[18]) or ($hash->{$a}->[2] <=> $hash->{$b}->[2]) } keys (%$hash)) {
+	foreach my $key (sort { ((($hash->{$a}->[18] eq "NA") || ($hash->{$b}->[18] eq "NA"))?$hash->{$a}->[18] cmp $hash->{$b}->[18]:$hash->{$a}->[18] <=> $hash->{$b}->[18]) or ($hash->{$a}->[2] <=> $hash->{$b}->[2]) } keys (%$hash)) {
   		try{
 	  		print(OUT $hash->{$key}->[3]."\t".$hash->{$key}->[19]."\t".$hash->{$key}->[20]."\t".$hash->{$key}->[18]."\t".$hash->{$key}->[2]."\t\""."$key"."\"\t".$hash->{$key}->[0]."\t".$hash->{$key}->[1]."\t\"".$hash->{$key}->[16]."\"\t\"".$hash->{$key}->[15]."\"\t\"".$hash->{$key}->[7]."\"\t\"".$hash->{$key}->[8]."\"\t\"".$hash->{$key}->[9]."\"\t\"".$hash->{$key}->[10]."\"\t\"".$hash->{$key}->[11]."\"\t\"".$hash->{$key}->[12]."\"\t\"".$hash->{$key}->[13]."\"\t\"".$hash->{$key}->[14]."\"\t".$hash->{$key}->[5]->{"omega_foreground"}."\t".$hash->{$key}->[5]->{"omega_background"}."\t".$hash->{$key}->[6]->{"kappa"}."\t".$hash->{$key}->[6]->{"omega_foreground"}."\t".$hash->{$key}->[6]->{"omega_background"}."\t".$hash->{$key}->[6]->{"kappa"}."\t".$hash->{$key}->[17]."\t");
 			if (defined($hash->{$key}->[4])) {
@@ -595,7 +595,7 @@ sub short_output_results_as_text_sorted{
 	open (OUT, ">".$output);
 	print(OUT "Gene\tTranscript\tFDR\tP-Value\tNumber of species included\tNumber of Sites under positive Selection\tJalview protein alignment\tProtein Alignment (interleaved)");
 	print(OUT "\n");
-	foreach my $key (sort { ($hash->{$a}->[18] <=> $hash->{$b}->[18]) or ($hash->{$a}->[2] <=> $hash->{$b}->[2]) } keys (%$hash)) {
+	foreach my $key (sort { ((($hash->{$a}->[18] eq "NA") || ($hash->{$b}->[18] eq "NA"))?$hash->{$a}->[18] cmp $hash->{$b}->[18]:$hash->{$a}->[18] <=> $hash->{$b}->[18]) or ($hash->{$a}->[2] <=> $hash->{$b}->[2]) } keys (%$hash)) {
   		try{
   			my $gene=File::Basename::basename(File::Basename::dirname(File::Basename::dirname($key)));  			
 	  		print(OUT $gene."\t".$hash->{$key}->[3]."\t".$hash->{$key}->[20]."\t".$hash->{$key}->[18]."\t".$hash->{$key}->[0]."\t".(defined($hash->{$key}->[4])?int(@{$hash->{$key}->[4]}):"-")."\t\"".$hash->{$key}->[16]."\"\t\"".$hash->{$key}->[7]."\"\t");
@@ -610,7 +610,7 @@ sub filter_for_iso_with_highest_p{
 	my ($results)=@_;
 	my %ret;
 	my %genes;
-	for my $key (sort {($results->{$b}->[17] <=> $results->{$a}->[17]) || ($results->{$b}->[2] <=> $results->{$a}->[2]) } keys (%$results)) {
+	for my $key (sort {($results->{$b}->[18] <=> $results->{$a}->[18]) || ($results->{$b}->[2] <=> $results->{$a}->[2]) } keys (%$results)) {
 		my @folders=split("/",$key);
 		if ((int(@folders)>2) && (!exists($genes{$folders[$#folders-2]}))){
 			$genes{$folders[$#folders-2]}="";
@@ -624,7 +624,7 @@ sub filter_for_iso_with_lowest_p{
 	my ($results)=@_;
 	my %ret;
 	my %genes;
-	for my $key (sort {($results->{$a}->[17] <=> $results->{$b}->[17]) || ($results->{$a}->[2] <=> $results->{$b}->[2]) } keys (%$results)) {
+	for my $key (sort {((($results->{$a}->[18] eq "NA") || ($results->{$b}->[18] eq "NA"))?$results->{$a}->[18] cmp $results->{$b}->[18]:$results->{$a}->[18] <=> $results->{$b}->[18]) || ($results->{$a}->[2] <=> $results->{$b}->[2]) } keys (%$results)) {
 		my @folders=split("/",$key);
 		if ((int(@folders)>2) && (!exists($genes{$folders[$#folders-2]}))){
 			$genes{$folders[$#folders-2]}="";
@@ -1014,11 +1014,18 @@ sub fdr{
 	my ($ps_ordered,$orig_pos)=selection_sort_decreasing(@_);
 	my $max=1;
 	my @qs;
+	my $l=@_;
 	my $i=@_;
 	for my $p(@$ps_ordered){
-		my $q=min($p*(@_/($i--)),1,$max);
-		$max=$q;
-		push (@qs,$q);
+		if ($p ne "NA"){
+			my $q=min($p*($l/$i),1,$max);
+			$max=$q;
+			push (@qs,$q);
+		} else {
+			$l--;
+			push(@qs,"NA");
+		}
+		$i--;
 	} 
 	my @qs_ret;
 	for (my $i=0; $i<@_; $i++){$qs_ret[$orig_pos->[$i]]=$qs[$i]}
@@ -1032,7 +1039,7 @@ sub selection_sort_decreasing{
 	for (my $i=0; $i<(@list-1);$i++){
 		my $max=$i;
 		for (my $j=$i+1; $j<@list;$j++){
-			if ($list[$j]>$list[$max]){$max=$j}
+			if (($list[$max] ne "NA") && (($list[$j] eq "NA") || ($list[$j]>$list[$max]))){$max=$j}
 		}
 		my $h=$list[$i];
 		$list[$i]=$list[$max];
@@ -1046,8 +1053,11 @@ sub selection_sort_decreasing{
 
 sub bonferroni{
 	my @qs;
+	my $l=0;
+	for my $p(@_){if($p ne "NA"){$l++}}
 	for my $p(@_){
-		push(@qs,min(1,int(@_)*$p))
+		if ($p eq "NA") {push(@qs,"NA")}
+		else {push(@qs,min(1,$l*$p))}
 	}
 	return @qs;
 }
