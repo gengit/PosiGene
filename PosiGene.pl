@@ -65,7 +65,8 @@ my $createTreeFromAlignment=$bin_dir."createTreeFromAlignment.pl";
 my $realign_with_prank=$bin_dir."realign_with_prank.pl";
 my $CodeML_positive_selection=$bin_dir."CodeML_positive_selection.pl";
 my $java="java";
-my $jalview="jalview.jar";
+#my $jalview="jalview.jar";
+my $jalview="Jalview";
 
 my $help=0;
 my $output_path="./";
@@ -251,7 +252,8 @@ if (($mode eq "view") || ($viewFile ne "")){
 		if ((substr($codeml_dir,length($codeml_dir)-1,1) ne "/") && (substr($codeml_dir,length($codeml_dir)-1,1) ne "\\")){$codeml_dir.="/"}
 		#print($viewParams{"alignment"}."\n$dir\n$codeml_dir\n");
 		if((exists($viewParams{"alignment"})) && (-e $dir.$viewParams{"alignment"}) && (exists($viewParams{"tree"})) && (-e $codeml_dir.$viewParams{"tree"}) && (exists($viewParams{"annotations"})) && (-e $dir.$viewParams{"annotation"}) && (exists($viewParams{"colour"})) && ($viewParams{"colour"}) ne ""){
-			system("$java -Djava.ext.dirs=$bin_dir"."lib -jar $bin_dir$jalview -open $dir$viewParams{alignment} -tree $codeml_dir$viewParams{tree} -annotations $dir$viewParams{annotations} -colour $viewParams{colour}");
+			#system("$java -Djava.ext.dirs=$bin_dir"."lib -jar $bin_dir$jalview -open $dir$viewParams{alignment} -tree $codeml_dir$viewParams{tree} -annotations $dir$viewParams{annotations} -colour $viewParams{colour}");
+			system("$jalview -open $dir$viewParams{alignment} -tree $codeml_dir$viewParams{tree} -annotations $dir$viewParams{annotations} -colour $viewParams{colour}");
 		}else{print("$viewFile was not found or is damaged.\n");exit(1)}
 	}catch{print("$viewFile was not found or is damaged.\n");exit(1)};
 	exit(0);
